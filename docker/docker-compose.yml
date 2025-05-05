@@ -35,7 +35,7 @@ services:
       ALLOWED_ORIGINS: http://localhost:3000
     ports:
       - "8080:8080"
-    restart: always
+    restart: on-failure
 
   frontend:
     build:
