@@ -1,29 +1,20 @@
-# Stage 1: Build the Go binary
-FROM golang:1.19 AS build
+# Build stage
+FROM golang:1.19 as build
 
 WORKDIR /app
-
-# Copy go mod files first (for better layer caching)
 COPY go.mod go.sum ./
 RUN go mod download
-
-# Copy source code
 COPY . .
-
-# Build the application
 RUN go build -o server main.go
 
-# Stage 2: Runtime container
+# Final stage
 FROM golang:1.19
 
 WORKDIR /app
 
-# Copy built Go binary from the build stage
 COPY --from=build /app/server .
-# Copy wait-for script
 COPY wait-for.sh .
 
-# Make script executable
 RUN chmod +x wait-for.sh
 
 # Expose port used by the backend
