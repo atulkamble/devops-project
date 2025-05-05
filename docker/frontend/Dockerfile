@@ -1,31 +1,34 @@
-# Step 1: Build the React app
-FROM node:14.17.0 as build
+# ---------- Step 1: Build the React app ----------
+FROM node:14.17.0 AS build
 
 WORKDIR /app
 
 # Copy package files and install dependencies
 COPY package*.json ./
-RUN npm install
+RUN npm install --legacy-peer-deps
 
-# Copy the rest of the frontend code
+# Copy source code
 COPY . .
 
-# Build React app for production
+# Build the React app
 RUN npm run build
 
-# Step 2: Serve the app with a static web server
+# ---------- Step 2: Serve using 'serve' ----------
 FROM node:14.17.0
 
-# Install serve
+# Install a simple static server
 RUN npm install -g serve
 
 WORKDIR /app
 
-# Copy build files from the previous stage
+# Copy build output from previous stage
 COPY --from=build /app/build ./build
 
-# Expose the frontend port
+# Set environment variable (optional if passed via docker-compose)
+ENV REACT_APP_SERVER_URL=http://backend:8080
+
+# Expose React app port
 EXPOSE 3000
 
-# Run the build with a static server
+# Serve the built app
 CMD ["serve", "-s", "build", "-l", "3000"]
