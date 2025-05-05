@@ -1,29 +1,35 @@
-# Use official Go image
-FROM golang:1.19 as build
+# Stage 1: Build the Go binary
+FROM golang:1.19 AS build
 
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy go mod files and download dependencies first (cache-friendly)
+# Copy go mod files first (for better layer caching)
 COPY go.mod go.sum ./
 RUN go mod download
 
-# Copy the rest of the backend source code
+# Copy source code
 COPY . .
 
-# Build the Go binary
+# Build the application
 RUN go build -o server main.go
 
-# -------- Final runtime container --------
+# Stage 2: Runtime container
 FROM golang:1.19
 
-# Set working directory
 WORKDIR /app
 
-# Copy the built Go binary from the build stage
+# Copy built Go binary from the build stage
 COPY --from=build /app/server .
+# Copy wait-for script
+COPY wait-for.sh .
 
-# Set environment variables (they will be overridden by docker-compose)
+# Make script executable
+RUN chmod +x wait-for.sh
+
+# Expose port used by the backend
+EXPOSE 8080
+
+# Set environment variables (overridden by docker-compose)
 ENV DB_HOST=localhost \
     DB_USER=postgres \
     DB_PASSWORD=admin123 \
@@ -31,8 +37,5 @@ ENV DB_HOST=localhost \
     DB_PORT=5432 \
     ALLOWED_ORIGINS=http://localhost:3000
 
-# Expose backend port
-EXPOSE 8080
-
-# Run the backend
-CMD ["./server"]
+# Wait for Postgres, then start server
+CMD ["./wait-for.sh", "postgres", "./server"]
