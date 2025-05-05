@@ -1,6 +1,6 @@
 // ssh connect -ec2
 type: large 
-storage: 20GB ebs
+storage: 40GB ebs
 
 SG: 22, 80, 8080
 
@@ -136,6 +136,42 @@ RUN chmod +x wait-for.sh
 
 EXPOSE 8080
 CMD ["./wait-for.sh", "postgres", "./server"]
+
+sudo yum update -y
+sudo yum install -y curl wget unzip bash-completion conntrack
+
+
+sudo yum install -y docker
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo usermod -aG docker ec2-user
+
+```
+# This overwrites any existing configuration in /etc/yum.repos.d/kubernetes.repo
+cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://pkgs.k8s.io/core:/stable:/v1.33/rpm/
+enabled=1
+gpgcheck=1
+gpgkey=https://pkgs.k8s.io/core:/stable:/v1.33/rpm/repodata/repomd.xml.key
+EOF
+``
+```
+sudo yum install -y kubectl
+```
+```
+sudo curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+sudo chmod +x minikube-linux-amd64
+sudo mv minikube-linux-amd64 /usr/local/bin/minikube
+
+```
+```
+minikube start --driver=docker
+```
+
+```
+
 
 
 
