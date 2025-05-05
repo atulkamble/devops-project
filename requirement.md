@@ -1,7 +1,3 @@
-Here's a well-structured **`requirement.md`** file for your project repository:
-
----
-
 ````markdown
 # 📦 CI/CD Pipeline with EKS & Terraform – Project Requirements
 
@@ -95,12 +91,7 @@ This is a full-stack microservices-based application for managing employee data.
 
 ---
 
-🧑‍💻 *Project by:* \[Your Name / Team Name]
+🧑‍💻 *Project by:* \[Atul Kamble / Cloudnautic]
 📅 *Created on:* `May 2025`
 
-```
-
----
-
-Would you also like a `README.md`, `Jenkinsfile`, or Terraform module structure to accompany this?
 ```
