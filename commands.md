@@ -176,3 +176,13 @@ sudo mv minikube-linux-amd64 /usr/local/bin/minikube
 ```
 minikube start --driver=docker
 ```
+// jenkins port change 
+```
+sudo nano /usr/lib/systemd/system/jenkins.service
+sudo systemctl daemon-reload
+sudo systemctl restart jenkins
+```
+// add line 
+```
+ExecStart=/usr/bin/java -jar /usr/lib/jenkins/jenkins.war --httpPort=8090
+```
